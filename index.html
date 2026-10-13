@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAKER | The Unkillable King</title>
+  <style>
+    :root {
+      --red: #e30613;
+      --deep-red: #8c0010;
+      --ink: #0d0d10;
+      --white: #fff8f8;
+      --muted: #d9c9c9;
+      --glass: rgba(255, 255, 255, 0.08);
+      --line: rgba(255, 255, 255, 0.18);
+      --shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--white);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(227, 6, 19, 0.34), transparent 32rem),
+        linear-gradient(135deg, #050506 0%, #151010 42%, #330005 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent 76%);
+      z-index: -1;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+    }
+
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem clamp(1rem, 3vw, 3rem);
+      background: linear-gradient(to bottom, rgba(5, 5, 6, 0.88), rgba(5, 5, 6, 0));
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 2.4rem;
+      aspect-ratio: 1;
+      border: 2px solid var(--white);
+      background: var(--red);
+      transform: skew(-10deg);
+      box-shadow: 0 0 28px rgba(227, 6, 19, 0.7);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: clamp(0.75rem, 2vw, 1.6rem);
+      color: rgba(255, 248, 248, 0.78);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .nav-links a {
+      position: relative;
+      padding-bottom: 0.25rem;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: var(--red);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 220ms ease;
+    }
+
+    .nav-links a:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .hero {
+      min-height: 100svh;
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.98fr);
+      align-items: center;
+      gap: clamp(2rem, 5vw, 5rem);
+      padding: clamp(6.5rem, 11vw, 10rem) clamp(1rem, 5vw, 6rem) clamp(2.5rem, 7vw, 5rem);
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.2rem;
+      color: var(--white);
+      font-size: 0.82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 3.6rem;
+      height: 3px;
+      background: var(--red);
+      box-shadow: 0 0 18px rgba(227, 6, 19, 0.9);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(4.4rem, 14vw, 12rem);
+      line-height: 0.82;
+      font-weight: 1000;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      text-shadow: 0 0 44px rgba(227, 6, 19, 0.35);
+    }
+
+    .hero h2 {
+      margin: 1.3rem 0 0;
+      max-width: 13ch;
+      font-size: clamp(2rem, 5vw, 5.4rem);
+      line-height: 0.94;
+      font-weight: 950;
+      color: transparent;
+      -webkit-text-stroke: 1.4px var(--white);
+      text-transform: uppercase;
+    }
+
+    .lead {
+      max-width: 42rem;
+      margin: 1.5rem 0 0;
+      color: rgba(255, 248, 248, 0.82);
+      font-size: clamp(1rem, 1.4vw, 1.18rem);
+      line-height: 1.75;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      margin-top: 2rem;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 3.15rem;
+      padding: 0 1.25rem;
+      border: 1px solid var(--white);
+      font-weight: 900;
+      background: var(--white);
+      color: var(--ink);
+      transition: transform 220ms ease, background 220ms ease, color 220ms ease, box-shadow 220ms ease;
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: var(--white);
+      border-color: rgba(255, 255, 255, 0.38);
+    }
+
+    .button:hover {
+      transform: translateY(-4px);
+      background: var(--red);
+      border-color: var(--red);
+      color: var(--white);
+      box-shadow: 0 18px 42px rgba(227, 6, 19, 0.42);
+    }
+
+    .hero-visual {
+      position: relative;
+      perspective: 1200px;
+    }
+
+    .portrait-card {
+      position: relative;
+      min-height: clamp(31rem, 72vw, 46rem);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      isolation: isolate;
+      transform: rotate(-2deg);
+      transition: transform 420ms ease, box-shadow 420ms ease;
+    }
+
+    .portrait-card:hover {
+      transform: rotate(0) translateY(-10px) rotateX(3deg) rotateY(-5deg);
+      box-shadow: 0 34px 110px rgba(227, 6, 19, 0.38);
+    }
+
+    .portrait-card::before,
+    .portrait-card::after {
+      content: "";
+      position: absolute;
+      inset: 1.1rem;
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      z-index: 2;
+      pointer-events: none;
+      transition: inset 360ms ease, border-color 360ms ease;
+    }
+
+    .portrait-card::after {
+      inset: auto 0 0;
+      height: 44%;
+      border: 0;
+      background: linear-gradient(to top, rgba(8, 0, 1, 0.95), transparent);
+    }
+
+    .portrait-card:hover::before {
+      inset: 0.7rem;
+      border-color: rgba(227, 6, 19, 0.78);
+    }
+
+    .portrait-card img {
+      position: absolute;
+      inset: 0;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(1.12) contrast(1.08);
+      transform: scale(1.04);
+      transition: transform 560ms ease, filter 560ms ease;
+      z-index: 1;
+    }
+
+    .portrait-card:hover img {
+      transform: scale(1.1);
+      filter: saturate(1.25) contrast(1.16);
+    }
+
+    .portrait-label {
+      position: absolute;
+      left: 2rem;
+      right: 2rem;
+      bottom: 1.8rem;
+      z-index: 3;
+    }
+
+    .portrait-label strong {
+      display: block;
+      font-size: clamp(1.8rem, 4vw, 3.5rem);
+      line-height: 0.9;
+      text-transform: uppercase;
+    }
+
+    .portrait-label span {
+      display: block;
+      margin-top: 0.55rem;
+      color: rgba(255,255,255,0.72);
+      font-weight: 800;
+    }
+
+    .float-stat {
+      position: absolute;
+      z-index: 4;
+      right: -1rem;
+      top: 16%;
+      width: min(11rem, 32vw);
+      padding: 1rem;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(227, 6, 19, 0.92);
+      box-shadow: 0 22px 60px rgba(0,0,0,0.4);
+    }
+
+    .float-stat b {
+      display: block;
+      font-size: clamp(2.7rem, 8vw, 5rem);
+      line-height: 0.82;
+    }
+
+    .float-stat small {
+      display: block;
+      margin-top: 0.5rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    section {
+      padding: clamp(4rem, 9vw, 8rem) clamp(1rem, 5vw, 6rem);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(280px, 1fr);
+      gap: clamp(1rem, 4vw, 4rem);
+      align-items: end;
+      margin-bottom: clamp(2rem, 5vw, 4rem);
+    }
+
+    .section-head h3 {
+      margin: 0;
+      font-size: clamp(2.1rem, 6vw, 5.8rem);
+      line-height: 0.92;
+      text-transform: uppercase;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: rgba(255, 248, 248, 0.76);
+      line-height: 1.8;
+      font-size: 1.03rem;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .era {
+      position: relative;
+      min-height: 18rem;
+      padding: 1.4rem;
+      border-right: 1px solid var(--line);
+      background: rgba(255,255,255,0.025);
+      overflow: hidden;
+      transition: background 260ms ease, transform 260ms ease;
+    }
+
+    .era:last-child {
+      border-right: 0;
+    }
+
+    .era::before {
+      content: attr(data-year);
+      position: absolute;
+      right: -0.25rem;
+      bottom: -0.8rem;
+      color: rgba(255, 255, 255, 0.045);
+      font-size: clamp(4rem, 10vw, 7rem);
+      font-weight: 1000;
+      line-height: 1;
+      transition: color 260ms ease, transform 260ms ease;
+    }
+
+    .era:hover {
+      background: rgba(227, 6, 19, 0.18);
+      transform: translateY(-7px);
+    }
+
+    .era:hover::before {
+      color: rgba(227, 6, 19, 0.28);
+      transform: translateY(-0.25rem);
+    }
+
+    .era span {
+      color: var(--red);
+      font-weight: 1000;
+    }
+
+    .era h4 {
+      position: relative;
+      margin: 1.1rem 0 0.8rem;
+      font-size: clamp(1.35rem, 2.2vw, 2rem);
+      line-height: 1;
+      text-transform: uppercase;
+      z-index: 1;
+    }
+
+    .era p {
+      position: relative;
+      margin: 0;
+      color: rgba(255, 248, 248, 0.72);
+      line-height: 1.7;
+      z-index: 1;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr 1fr;
+      grid-auto-rows: minmax(18rem, 32vw);
+      gap: 1rem;
+    }
+
+    .photo {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.24);
+      isolation: isolate;
+      cursor: default;
+    }
+
+    .photo.tall {
+      grid-row: span 2;
+    }
+
+    .photo.wide {
+      grid-column: span 2;
+    }
+
+    .photo img {
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.02);
+      transition: transform 620ms cubic-bezier(.2,.8,.2,1), filter 620ms ease;
+      filter: grayscale(0.22) contrast(1.05);
+    }
+
+    .photo::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(135deg, rgba(227, 6, 19, 0.72), transparent 42%),
+        linear-gradient(to top, rgba(2,2,3,0.9), transparent 58%);
+      opacity: 0.5;
+      transition: opacity 360ms ease;
+    }
+
+    .photo::after {
+      content: "";
+      position: absolute;
+      inset: 1rem;
+      z-index: 2;
+      border: 1px solid rgba(255,255,255,0);
+      transform: scale(0.94);
+      transition: transform 360ms ease, border-color 360ms ease;
+    }
+
+    .photo:hover img {
+      transform: scale(1.12) rotate(1.2deg);
+      filter: grayscale(0) contrast(1.15) saturate(1.18);
+    }
+
+    .photo:hover::before {
+      opacity: 0.22;
+    }
+
+    .photo:hover::after {
+      transform: scale(1);
+      border-color: rgba(255,255,255,0.62);
+    }
+
+    .photo-caption {
+      position: absolute;
+      left: 1.3rem;
+      right: 1.3rem;
+      bottom: 1.2rem;
+      z-index: 3;
+      transform: translateY(0.55rem);
+      transition: transform 320ms ease;
+    }
+
+    .photo:hover .photo-caption {
+      transform: translateY(0);
+    }
+
+    .photo-caption b {
+      display: block;
+      font-size: clamp(1.1rem, 2vw, 1.7rem);
+      text-transform: uppercase;
+    }
+
+    .photo-caption small {
+      display: block;
+      margin-top: 0.4rem;
+      color: rgba(255,255,255,0.72);
+      font-weight: 800;
+    }
+
+    .traits {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .trait {
+      min-height: 17rem;
+      padding: 1.35rem;
+      border: 1px solid rgba(255,255,255,0.14);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+        radial-gradient(circle at 100% 0%, rgba(227, 6, 19, 0.32), transparent 14rem);
+      transition: transform 240ms ease, border-color 240ms ease, background 240ms ease;
+    }
+
+    .trait:hover {
+      transform: translateY(-8px);
+      border-color: rgba(227, 6, 19, 0.72);
+      background:
+        linear-gradient(145deg, rgba(227, 6, 19,0.18), rgba(255,255,255,0.04)),
+        radial-gradient(circle at 100% 0%, rgba(227, 6, 19, 0.42), transparent 14rem);
+    }
+
+    .trait .number {
+      display: inline-grid;
+      place-items: center;
+      width: 3.2rem;
+      aspect-ratio: 1;
+      margin-bottom: 2.4rem;
+      border: 1px solid rgba(255,255,255,0.42);
+      background: var(--red);
+      font-weight: 1000;
+    }
+
+    .trait h4 {
+      margin: 0 0 0.8rem;
+      font-size: 1.45rem;
+      text-transform: uppercase;
+    }
+
+    .trait p {
+      margin: 0;
+      color: rgba(255, 248, 248, 0.72);
+      line-height: 1.75;
+    }
+
+    .quote-band {
+      position: relative;
+      margin: 0 clamp(1rem, 5vw, 6rem);
+      padding: clamp(3rem, 7vw, 6rem);
+      overflow: hidden;
+      background: var(--white);
+      color: var(--ink);
+    }
+
+    .quote-band::before {
+      content: "FAKER";
+      position: absolute;
+      right: -0.5rem;
+      bottom: -1.2rem;
+      color: rgba(227, 6, 19, 0.1);
+      font-size: clamp(5rem, 18vw, 16rem);
+      font-weight: 1000;
+      line-height: 0.8;
+    }
+
+    .quote-band p {
+      position: relative;
+      max-width: 62rem;
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 5.1rem);
+      line-height: 0.98;
+      font-weight: 1000;
+      text-transform: uppercase;
+    }
+
+    .quote-band span {
+      color: var(--red);
+    }
+
+    .closing {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.7fr);
+      gap: clamp(1.5rem, 4vw, 4rem);
+      align-items: center;
+    }
+
+    .closing h3 {
+      margin: 0;
+      font-size: clamp(2.5rem, 8vw, 7.5rem);
+      line-height: 0.86;
+      text-transform: uppercase;
+    }
+
+    .closing p {
+      color: rgba(255, 248, 248, 0.76);
+      line-height: 1.8;
+      font-size: 1.05rem;
+    }
+
+    .scoreboard {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .score {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.1rem;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.06);
+      transition: transform 220ms ease, background 220ms ease, border-color 220ms ease;
+    }
+
+    .score:hover {
+      transform: translateX(-8px);
+      background: rgba(227, 6, 19, 0.18);
+      border-color: rgba(227, 6, 19, 0.68);
+    }
+
+    .score b {
+      font-size: 1.9rem;
+      color: var(--red);
+    }
+
+    .footer {
+      padding: 1.4rem clamp(1rem, 5vw, 6rem) 2rem;
+      color: rgba(255,255,255,0.54);
+      font-size: 0.9rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .section-head,
+      .closing {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 6rem;
+      }
+
+      .float-stat {
+        right: 0.6rem;
+      }
+
+      .timeline,
+      .traits {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .gallery {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .nav {
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .portrait-card {
+        min-height: 30rem;
+        transform: none;
+      }
+
+      .timeline,
+      .traits,
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .era {
+        min-height: 14rem;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .photo,
+      .photo.tall,
+      .photo.wide {
+        grid-column: auto;
+        grid-row: auto;
+        min-height: 24rem;
+      }
+
+      .quote-band {
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="#top" aria-label="FAKER home">
+      <span class="brand-mark">F</span>
+      <span>The Unkillable King</span>
+    </a>
+    <div class="nav-links" aria-label="Điều hướng">
+      <a href="#legacy">Di sản</a>
+      <a href="#timeline">Timeline</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#mindset">Mindset</a>
+    </div>
+  </nav>
+
+  <main id="top">
+    <header class="hero">
+      <div class="hero-copy reveal">
+        <div class="kicker">T1 Mid Laner · Living Legend</div>
+        <h1>FAKER</h1>
+        <h2>The Unkillable King</h2>
+        <p class="lead">
+          Không chỉ là người chơi giỏi nhất. Faker là biểu tượng của sự bền bỉ:
+          một tuyển thủ vẫn đứng giữa tâm bão meta, áp lực và kỳ vọng sau hơn một thập kỷ.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="#timeline">Khám phá hành trình</a>
+          <a class="button secondary" href="#gallery">Xem visual</a>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal">
+        <article class="portrait-card">
+          <img src="https://img.redbull.com/images/c_limit%2Cw_1500%2Ch_1000/f_auto%2Cq_auto/redbullcom/2025/11/19/wi3i4esfzzycsalegtq3/faker-t1-esports-red-bull-2025" alt="Faker trong áo T1 đỏ" />
+          <div class="portrait-label">
+            <strong>Still here.<br />Still feared.</strong>
+            <span>Huyền thoại không chỉ thắng. Huyền thoại tồn tại.</span>
+          </div>
+        </article>
+        <aside class="float-stat" aria-label="World Championship titles">
+          <b>6x</b>
+          <small>World Champion</small>
+        </aside>
+      </div>
+    </header>
+
+    <section id="legacy">
+      <div class="section-head reveal">
+        <h3>Không cần ồn ào để là vua.</h3>
+        <p>
+          Điểm đáng sợ nhất của Faker không nằm ở một pha highlight. Đó là khả năng tái tạo bản thân:
+          từ prodigy cơ học, đến shot-caller, đến người giữ nhịp tinh thần cho cả một triều đại T1.
+        </p>
+      </div>
+
+      <div class="traits">
+        <article class="trait reveal">
+          <span class="number">01</span>
+          <h4>Độ bền tinh thần</h4>
+          <p>Thua, bị nghi ngờ, rồi trở lại. Faker biến áp lực thành một phần của tiêu chuẩn thi đấu.</p>
+        </article>
+        <article class="trait reveal">
+          <span class="number">02</span>
+          <h4>Thích nghi meta</h4>
+          <p>Khi trò chơi thay đổi, Faker không đóng băng ở quá khứ. Anh đổi vai, đổi nhịp, đổi cách thắng.</p>
+        </article>
+        <article class="trait reveal">
+          <span class="number">03</span>
+          <h4>Di sản sống</h4>
+          <p>Một thế hệ tuyển thủ lớn lên cùng Faker, rồi phải đối đầu chính người họ từng xem là hình mẫu.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="timeline">
+      <div class="section-head reveal">
+        <h3>Timeline của ngai đỏ.</h3>
+        <p>
+          Một landing page về Faker nên có xung đột: không chỉ “anh ấy thắng”, mà là “anh ấy vẫn thắng
+          sau khi cả thế giới nghĩ triều đại đã kết thúc”.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <article class="era reveal" data-year="2013">
+          <span>2013</span>
+          <h4>Khởi nguyên</h4>
+          <p>Tân binh của SKT bước lên sân khấu thế giới và biến mid lane thành lãnh địa cá nhân.</p>
+        </article>
+        <article class="era reveal" data-year="2015">
+          <span>2015-2016</span>
+          <h4>Vương triều</h4>
+          <p>Hai chức vô địch thế giới liên tiếp đặt Faker vào vùng mà mọi mid laner đều phải nhìn lên.</p>
+        </article>
+        <article class="era reveal" data-year="2023">
+          <span>2023-2025</span>
+          <h4>Tái sinh</h4>
+          <p>Faker và T1 trở lại đỉnh cao, viết tiếp chương mà nhiều người tưởng đã khép lại.</p>
+        </article>
+        <article class="era reveal" data-year="NOW">
+          <span>Hiện tại</span>
+          <h4>Biểu tượng</h4>
+          <p>Faker không còn chỉ là tuyển thủ. Anh là thước đo cho sự vĩ đại của esports.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="gallery">
+      <div class="section-head reveal">
+        <h3>Ảnh phải có lực.</h3>
+        <p>
+          Visual của trang dùng đỏ trắng làm xương sống, nhưng hover mới là điểm ăn tiền:
+          ảnh phóng nhẹ, lớp màu rút xuống, khung trắng hiện ra như một khoảnh khắc được đóng dấu.
+        </p>
+      </div>
+
+      <div class="gallery">
+        <article class="photo tall reveal">
+          <img src="https://img.redbull.com/images/c_limit%2Cw_1500%2Ch_1000/f_auto%2Cq_auto/redbullcom/2025/11/19/wi3i4esfzzycsalegtq3/faker-t1-esports-red-bull-2025" alt="Faker trong ánh sáng đỏ" />
+          <div class="photo-caption">
+            <b>The Red King</b>
+            <small>Áp lực càng lớn, hình ảnh càng sắc.</small>
+          </div>
+        </article>
+        <article class="photo reveal">
+          <img src="https://tu.duoduocdn.com/uploads/day_241103/202411030022214963.jpg" alt="Faker trong áo T1 trắng" />
+          <div class="photo-caption">
+            <b>Cold Focus</b>
+            <small>Bình tĩnh là một dạng thống trị.</small>
+          </div>
+        </article>
+        <article class="photo reveal">
+          <img src="https://www.techm.kr/news/photo/202010/76012_70195_4912.jpg" alt="Faker giơ nắm tay trên sân khấu" />
+          <div class="photo-caption">
+            <b>Stage Blood</b>
+            <small>Sân khấu là nơi danh tiếng được kiểm chứng.</small>
+          </div>
+        </article>
+        <article class="photo wide reveal">
+          <img src="https://game-press-jp.buyacard.cc/%E9%9F%93%E5%9B%BD%E6%96%87%E5%8C%96%E4%BD%93%E8%82%B2%E8%A6%B3%E5%85%89%E9%83%A8%E3%81%8C%E5%85%AC%E5%BC%8F%E8%AA%BF%E6%9F%BB%E3%82%92%E7%99%BA%E8%A1%A8%E3%80%80%E3%80%8E%E3%83%AA%E3%83%BC%E3%82%B0%E3%83%BB%E3%82%AA%E3%83%96%E3%83%BB%E3%83%AC%E3%82%B8%E3%82%A7%E3%83%B3%E3%83%89%E3%80%8FFaker%E3%81%8C%E3%80%8C%E6%9C%80%E3%82%82%E5%BD%B1%E9%9F%BF%E5%8A%9B%E3%81%AE%E3%81%82%E3%82%8B%E9%9F%93%E6%B5%81%E3%82%B9%E3%82%BF%E3%83%BC%E3%80%8D%E3%83%88%E3%83%83%E3%83%975%E5%85%A5%E3%82%8A" alt="Faker ngồi dưới logo T1" />
+          <div class="photo-caption">
+            <b>Legacy Room</b>
+            <small>Khi biểu tượng vượt khỏi trò chơi.</small>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <aside class="quote-band reveal">
+      <p>Vĩ đại không phải là không gục ngã. <span>Vĩ đại là khiến mọi lần trở lại trở thành lịch sử.</span></p>
+    </aside>
+
+    <section id="mindset" class="closing">
+      <div class="reveal">
+        <h3>Still playing. Still defining.</h3>
+        <p>
+          Đây là lý do landing page nên chọn hướng “The Unkillable King”: Faker không cần được kể như một ký ức.
+          Anh vẫn là câu hỏi mà mọi đội tuyển phải trả lời khi bước vào trận đấu lớn.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="#top">Trở lại đầu trang</a>
+        </div>
+      </div>
+
+      <div class="scoreboard reveal" aria-label="Faker achievements">
+        <div class="score"><span>World Championships</span><b>6</b></div>
+        <div class="score"><span>MSI Titles</span><b>2</b></div>
+        <div class="score"><span>LCK Titles</span><b>10</b></div>
+        <div class="score"><span>Hall of Legends</span><b>01</b></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Landing page concept về Faker · Red / White editorial esports style
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, { threshold: 0.18 });
+
+    document.querySelectorAll(".reveal").forEach((element) => observer.observe(element));
+  </script>
+</body>
+</html>
